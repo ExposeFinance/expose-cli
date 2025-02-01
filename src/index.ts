@@ -1,55 +1,91 @@
 import "dotenv/config";
+import nebulaChat from "./thirdweb/nebulaChat.js";
 import nebulaExecute from "./thirdweb/nebulaExecute.js";
 import nebulaCreateSession from "./thirdweb/nebulaCreateSession.js";
 import { checkEnvironmentVariables } from "./utils/envCheck.js";
 import { account } from "./utils/createAccountFromPrivateKey.js";
 import { polygon } from "thirdweb/chains";
-import nebulaChat from "./thirdweb/nebulaChat.js";
+import readline from "readline";
 
 async function main() {
-  checkEnvironmentVariables(); // Check if you've set all the environment variables
+  // Ensure required environment variables are set
+  checkEnvironmentVariables();
 
-  // Create a new session to remember context from the chat
+  // Create a new session to remember context across prompts
   const session = await nebulaCreateSession({
     title: "My session",
   });
 
-  // Example: Add specific context to our agent - e.g our preferred USDC on polygon.
-  console.log(
-    await nebulaChat({
-      prompt:
-        "Remember that the USDC contract address is 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-      context: {
-        chains: [polygon],
-      },
-      sessionId: session.result.id,
-    })
-  );
+  // Create a readline interface for CLI input/output
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
 
-  console.log(
-    await nebulaChat({
-      prompt: "What is my USDC balance?",
-      context: {
-        chains: [polygon],
-      },
-      sessionId: session.result.id,
-    })
-  );
+  // Helper function to wrap rl.question in a Promise with explicit types
+  const askQuestion = (question: string): Promise<string> =>
+    new Promise((resolve: (answer: string) => void) => {
+      rl.question(question, resolve);
+    });
 
-  //Transfer 0.1 POL to 0x1f4233E96993C94e37Bbd6C8bee455376625b09A
-  //Should also support ENS domain names
+  console.log("Welcome! You can now interact with the agent.");
   console.log(
-    await nebulaExecute({
-      prompt:
-        "Transfer 0.1 MATIC to 0x1f4233E96993C94e37Bbd6C8bee455376625b09A",
-      // prompt:
-      // "Swap 1 USDC for POL with 10% slippage."
-      context: {
-        chains: [polygon],
-      },
-      account: account,
-    })
+    "Type 'chat' for a chat call, 'execute' for an execute call, or 'exit' to quit."
   );
+  console.log("For each call, a prompt must be typed.\n");
+
+  // Start an infinite loop to continuously prompt for user input
+  while (true) {
+    // Ask the user which type of call to make
+    const callType: string = (
+      await askQuestion("Enter call type (chat/execute/exit): ")
+    )
+      .trim()
+      .toLowerCase();
+
+    // Exit the loop if the user types 'exit'
+    if (callType === "exit") {
+      console.log("Exiting...");
+      break;
+    }
+
+    // Ask for the prompt
+    const promptText: string = await askQuestion("Enter your prompt: ");
+
+    // Process the call based on the selected type
+    if (callType === "chat") {
+      try {
+        const response = await nebulaChat({
+          prompt: promptText,
+          context: { chains: [polygon] },
+          sessionId: session.result.id,
+        });
+        console.log("Chat Response:", response);
+      } catch (error: unknown) {
+        console.error("Error during nebulaChat:", error);
+      }
+    } else if (callType === "execute") {
+      try {
+        const response = await nebulaExecute({
+          prompt: promptText,
+          context: { chains: [polygon] },
+          account: account,
+        });
+        console.log("Transaction Hash:", response.transactionHash);
+      } catch (error: unknown) {
+        console.error("Error during nebulaExecute:", error);
+      }
+    } else {
+      console.log(
+        "Invalid call type. Please enter 'chat', 'execute', or 'exit'."
+      );
+    }
+
+    console.log(); // Print an empty line for better readability between prompts
+  }
+
+  // Close the readline interface
+  rl.close();
 }
 
 main();

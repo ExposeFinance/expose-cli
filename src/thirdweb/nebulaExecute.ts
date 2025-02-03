@@ -6,8 +6,6 @@ import { account } from "../utils/createAccountFromPrivateKey.js";
 // Using Omit to remove 'client' from Nebula.Input, then adding it back as optional
 type NebulaExecuteInput = Omit<Nebula.Input, "client"> & {
   client?: Nebula.Input["client"];
-  prompt?: Nebula.Input["prompt"];
-  sessionId?: Nebula.Input["sessionId"];
   account: Account;
 };
 
@@ -24,4 +22,3 @@ export default async function nebulaExecute(input: NebulaExecuteInput) {
     throw error;
   }
 }
-

@@ -1,0 +1,22 @@
+{
+  "chat": [
+    "What ERC standards are implemented by contract address 0x59325733eb952a92e069C87F0A6168b29E80627f on Ethereum?",
+    "What functions can I use to mint more of my contract's NFTs?",
+    "How much ETH is in my wallet?",
+    "What is the wallet address of vitalik.eth?",
+    "What is the last block on zkSync?",
+    "What is the current gas price on Avalanche C-Chain?",
+    "What is the address of USDC on Ethereum?",
+    "Is there a UNI token on Arbitrum?",
+    "What is the current price of ARB?"
+  ],
+  "execute": [
+    "Send 0.1 ETH to vitalik.eth",
+    "Transfer 1 USDC to vitalik.eth on Base",
+    "Deploy a Token ERC20 Contract",
+    "Deploy a Split contract with two recipients.",
+    "Deploy an ERC1155 Contract named 'Hello World' with description 'Hello badges on Ethereum'",
+    "Transfer 0.1 MATIC to 0x1f4233E96993C94e37Bbd6C8bee455376625b09A",
+    "Swap 1 USDC for POL with 10% slippage."
+  ]
+}

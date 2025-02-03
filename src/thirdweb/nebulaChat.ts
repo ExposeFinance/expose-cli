@@ -4,6 +4,8 @@ import { client } from "./thirdwebClient.js";
 
 type NebulaChatInput = Omit<Nebula.Input, "client"> & {
   client?: Nebula.Input["client"];
+  prompt?: Nebula.Input["prompt"];
+  sessionId?: Nebula.Input["sessionId"];
 };
 
 export default async function nebulaChat(input: NebulaChatInput) {

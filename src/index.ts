@@ -4,7 +4,7 @@ import nebulaExecute from "./thirdweb/nebulaExecute.js";
 import nebulaCreateSession from "./thirdweb/nebulaCreateSession.js";
 import { checkEnvironmentVariables } from "./utils/envCheck.js";
 import { account } from "./utils/createAccountFromPrivateKey.js";
-import { polygon } from "thirdweb/chains";
+import { sepolia } from "thirdweb/chains";
 import readline from "readline";
 import { sendTransaction } from "thirdweb";
 
@@ -57,7 +57,7 @@ async function main() {
   await nebulaChat({
     prompt:
       "Remember that USDC contract address is 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-    context: { chains: [polygon] },
+    context: { chains: [sepolia] },
     sessionId: session.result.id,
   });
   console.log("Welcome! You can now interact with the agent.");
@@ -119,7 +119,7 @@ async function main() {
       try {
         const response = await nebulaChat({
           prompt: selectedPrompt,
-          context: { chains: [polygon] },
+          context: { chains: [sepolia] },
           sessionId: session.result.id,
         });
         console.log("\nChat Response:");
@@ -149,7 +149,7 @@ async function main() {
                   account,
                 });
                 console.log(
-                  `Transaction executed successfully. Tx Hash: ${txHash}`
+                  `Transaction executed successfully. Tx Hash: ${txHash?.transactionHash}`
                 );
               } catch (err) {
                 console.error("Error executing transaction:", err);
@@ -166,7 +166,7 @@ async function main() {
       try {
         const response = await nebulaExecute({
           prompt: selectedPrompt,
-          context: { chains: [polygon] },
+          context: { chains: [sepolia] },
           account: account,
         });
         console.log("\nExecute Response:");

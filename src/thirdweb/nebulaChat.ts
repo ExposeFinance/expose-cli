@@ -12,7 +12,7 @@ export default async function nebulaChat(input: NebulaChatInput) {
       ...input,
       client: input.client || client,
       account: input.account || account,
-    });
+    } as Nebula.Input);
     return response;
   } catch (error) {
     console.error(error);
